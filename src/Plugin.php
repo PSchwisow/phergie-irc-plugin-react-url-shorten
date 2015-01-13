@@ -13,6 +13,8 @@ namespace PSchwisow\Phergie\Plugin\UrlShorten;
 use Phergie\Irc\Bot\React\AbstractPlugin;
 use Phergie\Irc\Bot\React\EventQueueInterface as Queue;
 use Phergie\Irc\Event\EventInterface as Event;
+use React\Promise\Deferred;
+use WyriHaximus\Phergie\Plugin\Url\UrlInterface;
 
 /**
  * Plugin class.
@@ -31,7 +33,7 @@ class Plugin extends AbstractPlugin
      *
      * @param array $config
      */
-    public function __construct(array $config = array())
+    public function __construct(array $config = [])
     {
 
     }
@@ -43,18 +45,33 @@ class Plugin extends AbstractPlugin
      */
     public function getSubscribedEvents()
     {
-        return array(
-            'irc.' => 'handleEvent',
-        );
+        return [
+            'url.shorting.all' => 'handleShortenEvent',
+        ];
     }
 
     /**
-     *
-     *
-     * @param \Phergie\Irc\Event\EventInterface $event
-     * @param \Phergie\Irc\Bot\React\EventQueueInterface $queue
+     * @param string $message
      */
-    public function handleEvent(Event $event, Queue $queue)
+    public function logDebug($message)
     {
+        $this->logger->debug('[UrlShorten]' . $message);
+    }
+
+    /**
+     * Handle the event
+     *
+     * @param string $url
+     * @param \React\Promise\Deferred $deferred
+     */
+    public function handleShortenEvent($url, Deferred $deferred)
+    {
+        $requestId = uniqid();
+        $this->logDebug('[' . $requestId . ']Shortening url: ' . $url);
+
+        // TODO some real logic
+        $shortUrl = 'http://example.com/' . urlencode($url);
+
+        $deferred->resolve($shortUrl);
     }
 }
