@@ -2,7 +2,7 @@
 
 [Phergie](http://github.com/phergie/phergie-irc-bot-react/) plugin to provide URL shortening services for Url plugin (and others).
 
-[![Build Status](https://secure.travis-ci.org/pschwisow/phergie-irc-plugin-react-url-shorten.png?branch=master)](http://travis-ci.org/pschwisow/phergie-irc-plugin-react-url-shorten)
+[![Build Status](https://secure.travis-ci.org/PSchwisow/phergie-irc-plugin-react-url-shorten.png?branch=master)](http://travis-ci.org/pschwisow/phergie-irc-plugin-react-url-shorten)
 
 ## Install
 
@@ -30,7 +30,15 @@ return [
         new \WyriHaximus\Phergie\Plugin\Url\Plugin, // Emits url.shorting.* events
 
         // configuration
-        new \PSchwisow\Phergie\Plugin\UrlShorten\Plugin
+        new \PSchwisow\Phergie\Plugin\UrlShorten\Plugin([
+            // All configuration is optional
+
+            // Specify the classname of the shortener adapter
+            'service' => 'Gscio', // FQCN or relative to PSchwisow\Phergie\Plugin\UrlShorten\Adapter
+
+            // Override adapter's minimum length to attempt to shorten
+            'minimumLength' => 15
+        ])
     ]
 ];
 ```
