@@ -2,7 +2,7 @@
 
 [Phergie](http://github.com/phergie/phergie-irc-bot-react/) plugin to provide URL shortening services for Url plugin (and others).
 
-[![Build Status](https://secure.travis-ci.org/PSchwisow/phergie-irc-plugin-react-url-shorten.png?branch=master)](http://travis-ci.org/pschwisow/phergie-irc-plugin-react-url-shorten)
+[![Build Status](https://secure.travis-ci.org/PSchwisow/phergie-irc-plugin-react-url-shorten.png?branch=master)](http://travis-ci.org/PSchwisow/phergie-irc-plugin-react-url-shorten)
 
 ## Install
 
