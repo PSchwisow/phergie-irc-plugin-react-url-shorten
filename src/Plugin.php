@@ -44,26 +44,44 @@ class Plugin extends AbstractPlugin
      * minimumLength - minimum length of URL to attempt to shorten (overrides what is set in the adapter)
      *
      * @param array $config
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $config = [])
     {
-        $class = self::DEFAULT_ADAPTER;
-        if (isset($config['service'])) {
-            if (class_exists($config['service'])) {
-                $class = $config['service'];
-            } elseif (class_exists("PSchwisow\\Phergie\\Plugin\\UrlShorten\\Adapter\\{$config['service']}")) {
-                $class = "PSchwisow\\Phergie\\Plugin\\UrlShorten\\Adapter\\{$config['service']}";
-            }
-        }
-        $this->adapter = new $class;
-
-        if (!$this->adapter instanceof AbstractAdapter) {
-            throw new \InvalidArgumentException("Invalid option for shortener service: '$class'");
-        }
+        $this->setAdapter(isset($config['service']) ? $config['service'] : self::DEFAULT_ADAPTER);
 
         if (isset($config['minimumLength'])) {
             $this->adapter->setMinimumLength(intval($config['minimumLength']));
         }
+    }
+
+    /**
+     * Set adapter
+     *
+     * @param string|\PSchwisow\Phergie\Plugin\UrlShorten\Adapter\AbstractAdapter
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    public function setAdapter($adapter)
+    {
+        if (is_string($adapter)) {
+            if (class_exists($adapter)) {
+                $class = $adapter;
+            } elseif (class_exists("PSchwisow\\Phergie\\Plugin\\UrlShorten\\Adapter\\{$adapter}")) {
+                $class = "PSchwisow\\Phergie\\Plugin\\UrlShorten\\Adapter\\{$adapter}";
+            } else {
+                throw new \InvalidArgumentException("Class not found: '$adapter'");
+            }
+            $adapter = new $class;
+        }
+
+        if (!$adapter instanceof AbstractAdapter) {
+            throw new \InvalidArgumentException(
+                'Shortener service must extend PSchwisow\Phergie\Plugin\UrlShorten\Adapter\AbstractAdapter'
+            );
+        }
+        $this->adapter = $adapter;
+
     }
 
     /**
@@ -101,10 +119,11 @@ class Plugin extends AbstractPlugin
         if (strlen($url) < $this->adapter->getMinimumLength()) {
             $this->logDebug('[' . $requestId . ']Skip shortening url (too short): ' . $url);
             $deferred->resolve($url);
+            return;
         }
         $this->logDebug('[' . $requestId . ']Shortening url: ' . $url);
 
         $request = $this->adapter->getApiRequest($this->adapter->getApiUrl($url), $deferred);
-        $this->getEventEmitter()->emit('http.request', array($request));
+        $this->getEventEmitter()->emit('http.request', [$request]);
     }
 }
