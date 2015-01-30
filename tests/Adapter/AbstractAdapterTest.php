@@ -85,7 +85,7 @@ abstract class AbstractAdapterTest extends \PHPUnit_Framework_TestCase
 
         $request->callReject('foo');
         $request->callResolve($shortUrl, '', 201);
-        $request->callResolve('bar', '', 500);
+        $request->callResolve('Error: bar', '', 500);
 
         Phake::inOrder(
             Phake::verify($deferred)->reject('foo'),
