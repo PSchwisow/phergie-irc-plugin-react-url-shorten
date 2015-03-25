@@ -27,7 +27,9 @@ return [
         // dependencies
         new \WyriHaximus\Phergie\Plugin\Dns\Plugin, // Handles DNS lookups for the HTTP plugin
         new \WyriHaximus\Phergie\Plugin\Http\Plugin, // Handles the HTTP requests for this plugin
-        new \WyriHaximus\Phergie\Plugin\Url\Plugin, // Emits url.shorting.* events
+        new \WyriHaximus\Phergie\Plugin\Url\Plugin([
+            'handler' => new \WyriHaximus\Phergie\Plugin\Url\DefaultUrlHandler('[%url-short%] %composed-title%')
+        ]), // Emits url.shorting.* events
 
         // configuration
         new \PSchwisow\Phergie\Plugin\UrlShorten\Plugin([
