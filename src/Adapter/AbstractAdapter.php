@@ -4,7 +4,7 @@
  *
  * @link https://github.com/PSchwisow/phergie-irc-plugin-react-url-shorten for the canonical source repository
  * @copyright Copyright (c) 2015 Patrick Schwisow (https://github.com/PSchwisow/phergie-irc-plugin-react-url-shorten)
- * @license http://phergie.org/license New BSD License
+ * @license http://phergie.org/license Simplified BSD License
  * @package PSchwisow\Phergie\Plugin\UrlShorten
  */
 
