@@ -55,7 +55,12 @@ class Plugin extends AbstractPlugin
      *
      * service - classname of the adapter to use
      *   (either relative to PSchwisow\Phergie\Plugin\UrlShorten\Adapter or FQCN)
+     *
      * minimumLength - minimum length of URL to attempt to shorten (overrides what is set in the adapter)
+     *
+     * skipHosts - array of hostname to not attempt to shorten
+     *
+     * disableDefaultSkipHosts - when set to true, disables the default list of hostnames not to attempt to shorten
      *
      * @param array $config
      * @throws \InvalidArgumentException
