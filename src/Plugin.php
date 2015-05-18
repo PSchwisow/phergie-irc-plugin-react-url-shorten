@@ -35,6 +35,20 @@ class Plugin extends AbstractPlugin
     private $adapter;
 
     /**
+     * List of hosts not to shorten (presumably because the URL is already shortened).
+     *
+     * @var array
+     */
+    private $skipHosts = [
+        'goo.gl',
+        'lnkd.in',
+        't.co',
+        'youtu.be',
+        'gsc.io',
+        'is.gd',
+    ];
+
+    /**
      * Accepts plugin configuration.
      *
      * Supported keys:
@@ -52,6 +66,17 @@ class Plugin extends AbstractPlugin
 
         if (isset($config['minimumLength'])) {
             $this->adapter->setMinimumLength(intval($config['minimumLength']));
+        }
+
+        $disableDefaults = isset($config['disableDefaultSkipHosts']) && $config['disableDefaultSkipHosts'] == true;
+        if (isset($config['skipHosts']) && is_array($config['skipHosts'])) {
+            if ($disableDefaults) {
+                $this->skipHosts = $config['skipHosts'];
+            } else {
+                $this->skipHosts = array_merge($this->skipHosts, $config['skipHosts']);
+            }
+        } elseif ($disableDefaults) {
+            $this->skipHosts = [];
         }
     }
 
@@ -121,8 +146,16 @@ class Plugin extends AbstractPlugin
             $deferred->resolve($url);
             return;
         }
-        $this->logDebug('[' . $requestId . ']Shortening url: ' . $url);
 
+        // Check if URL host is one we're skipping
+        $host = parse_url($url, PHP_URL_HOST);
+        if (in_array($host, $this->skipHosts)) {
+            $this->logDebug('[' . $requestId . ']Skip shortening url (based on hostname): ' . $url);
+            $deferred->resolve($url);
+            return;
+        }
+
+        $this->logDebug('[' . $requestId . ']Shortening url: ' . $url);
         $request = $this->adapter->getApiRequest($this->adapter->getApiUrl($url), $deferred);
         $this->getEventEmitter()->emit('http.request', [$request]);
     }

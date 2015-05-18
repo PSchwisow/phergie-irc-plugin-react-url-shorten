@@ -68,6 +68,27 @@ class PluginTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests handleShortenEvent().
+     */
+    public function testHandleShortenEventSkipHost()
+    {
+        $adapter = $this->getMockAdapter();
+        $deferred = $this->getMockDeferred();
+        $logger = $this->getMockLogger();
+
+        $plugin = new Plugin(['service' => $adapter, 'minimumLength' => 20, 'skipHosts' => ['abc.com', 'xyz.net']]);
+        $plugin->setLogger($logger);
+
+        $url = 'http://abc.com/abcdefghijklmnop';
+        $plugin->handleShortenEvent($url, $deferred);
+
+        Phake::inOrder(
+            Phake::verify($logger)->debug($this->stringContains('Skip shortening url (based on hostname): ')),
+            Phake::verify($deferred)->resolve($url)
+        );
+    }
+
+    /**
      * Tests that getSubscribedEvents() returns an array.
      */
     public function testGetSubscribedEvents()
