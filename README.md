@@ -39,7 +39,13 @@ return [
             'service' => 'Gscio', // FQCN or relative to PSchwisow\Phergie\Plugin\UrlShorten\Adapter
 
             // Override adapter's minimum length to attempt to shorten
-            'minimumLength' => 15
+            'minimumLength' => 15,
+
+            // Add to list of hosts to skip shortening (presumably because they are already shortened)
+            'skipHosts' => ['abc.com', 'xyz.net']
+
+            // Disable the default list of hosts to skip shortening
+            'disableDefaultSkipHosts' => true
         ])
     ]
 ];
