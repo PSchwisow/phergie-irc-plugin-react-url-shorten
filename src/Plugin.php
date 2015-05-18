@@ -148,7 +148,7 @@ class Plugin extends AbstractPlugin
         }
 
         // Check if URL host is one we're skipping
-        $host = parse_url($url, PHP_URL_HOST);
+        $host = parse_url($url, \PHP_URL_HOST);
         if (in_array($host, $this->skipHosts)) {
             $this->logDebug('[' . $requestId . ']Skip shortening url (based on hostname): ' . $url);
             $deferred->resolve($url);
