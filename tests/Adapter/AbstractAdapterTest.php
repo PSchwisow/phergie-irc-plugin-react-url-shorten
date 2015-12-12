@@ -10,6 +10,7 @@
 
 namespace PSchwisow\Phergie\Tests\Plugin\UrlShorten\Adapter;
 
+use GuzzleHttp\Message\Response;
 use Phake;
 use PSchwisow\Phergie\Plugin\UrlShorten\Adapter\AbstractAdapter;
 
@@ -79,13 +80,23 @@ abstract class AbstractAdapterTest extends \PHPUnit_Framework_TestCase
         $shortUrl = 'http://gsc.io/u/112';
         $deferred = $this->getMockDeferred();
         $request = $this->adapter->getApiRequest($apiUrl, $deferred);
+        $body = Phake::mock('GuzzleHttp\Stream\StreamInterface');
 
-        $this->assertInstanceOf('WyriHaximus\Phergie\Plugin\Http\Request', $request);
+        $this->assertInstanceOf('Phergie\Plugin\Http\Request', $request);
         $this->assertEquals($apiUrl, $request->getUrl());
 
         $request->callReject('foo');
-        $request->callResolve($shortUrl, '', 201);
-        $request->callResolve('Error: bar', '', 500);
+        $request->callResolve(
+            new Response(201, [], $body)
+        );
+        $request->callResolve(
+            new Response(500, ['Error: bar'], $body)
+        );
+
+//        $request->callResolve($response, '', 201);
+//        $request->callResolve('Error: bar', '', 500);
+
+        Phake::verify($deferred)->resolve($shortUrl);
 
         Phake::inOrder(
             Phake::verify($deferred)->reject('foo'),

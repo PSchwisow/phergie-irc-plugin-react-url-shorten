@@ -11,7 +11,8 @@
 namespace PSchwisow\Phergie\Plugin\UrlShorten\Adapter;
 
 use React\Promise\Deferred;
-use WyriHaximus\Phergie\Plugin\Http\Request;
+use Phergie\Plugin\Http\Request;
+use GuzzleHttp\Message\Response;
 
 /**
  * Base class for adapters that will connect to each of the possible shortener services.
@@ -68,7 +69,10 @@ abstract class AbstractAdapter
         return new Request([
             'url' => $apiUrl,
             'resolveCallback' =>
-                function ($data, $headers, $code) use ($deferred) {
+                function (Response $response) use ($deferred) {
+                    $data = $response->getBody();
+                    $headers = $response->getHeaders();
+                    $code = $response->getStatusCode();
                     $shortUrl = $this->handleResponse($data, $headers, $code);
                     if ($shortUrl === false) {
                         $deferred->reject();
