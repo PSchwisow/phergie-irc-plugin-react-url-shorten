@@ -11,7 +11,7 @@ The recommended method of installation is [through composer](http://getcomposer.
 ```JSON
 {
     "require": {
-        "pschwisow/phergie-irc-plugin-react-url-shorten": "^1"
+        "pschwisow/phergie-irc-plugin-react-url-shorten": "^2"
     }
 }
 ```
@@ -25,11 +25,11 @@ See Phergie documentation for more information on
 return [
     'plugins' => [
         // dependencies
-        new \WyriHaximus\Phergie\Plugin\Dns\Plugin, // Handles DNS lookups for the HTTP plugin
-        new \WyriHaximus\Phergie\Plugin\Http\Plugin, // Handles the HTTP requests for this plugin
-        new \WyriHaximus\Phergie\Plugin\Url\Plugin([
+        new \Phergie\Plugin\Dns\Plugin, // Handles DNS lookups for the HTTP plugin
+        new \Phergie\Plugin\Http\Plugin, // Handles the HTTP requests for this plugin
+        new \Phergie\Irc\Plugin\React\Url\Plugin([
             'handler' => new \WyriHaximus\Phergie\Plugin\Url\DefaultUrlHandler('[%url-short%] %composed-title%')
-        ]), // Emits url.shorting.* events
+        ]), // Emits url.shorten.* events
 
         // configuration
         new \PSchwisow\Phergie\Plugin\UrlShorten\Plugin([

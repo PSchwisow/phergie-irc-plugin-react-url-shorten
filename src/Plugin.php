@@ -122,7 +122,7 @@ class Plugin extends AbstractPlugin
     public function getSubscribedEvents()
     {
         return [
-            'url.shorting.all' => 'handleShortenEvent',
+            'url.shorten.all' => 'handleShortenEvent',
         ];
     }
 
