@@ -70,7 +70,7 @@ abstract class AbstractAdapter
             'url' => $apiUrl,
             'resolveCallback' =>
                 function (Response $response) use ($deferred) {
-                    $data = $response->getBody();
+                    $data = (string) $response->getBody();
                     $headers = $response->getHeaders();
                     $code = $response->getStatusCode();
                     $shortUrl = $this->handleResponse($data, $headers, $code);

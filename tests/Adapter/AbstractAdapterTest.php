@@ -10,7 +10,6 @@
 
 namespace PSchwisow\Phergie\Tests\Plugin\UrlShorten\Adapter;
 
-use GuzzleHttp\Message\Response;
 use Phake;
 use PSchwisow\Phergie\Plugin\UrlShorten\Adapter\AbstractAdapter;
 
@@ -80,23 +79,17 @@ abstract class AbstractAdapterTest extends \PHPUnit_Framework_TestCase
         $shortUrl = 'http://gsc.io/u/112';
         $deferred = $this->getMockDeferred();
         $request = $this->adapter->getApiRequest($apiUrl, $deferred);
-        $body = Phake::mock('GuzzleHttp\Stream\StreamInterface');
 
         $this->assertInstanceOf('Phergie\Plugin\Http\Request', $request);
         $this->assertEquals($apiUrl, $request->getUrl());
 
         $request->callReject('foo');
         $request->callResolve(
-            new Response(201, [], $body)
+            $this->getMockResponse(201, [], $shortUrl)
         );
         $request->callResolve(
-            new Response(500, ['Error: bar'], $body)
+            $this->getMockResponse(500, [], 'Error: bar')
         );
-
-//        $request->callResolve($response, '', 201);
-//        $request->callResolve('Error: bar', '', 500);
-
-        Phake::verify($deferred)->resolve($shortUrl);
 
         Phake::inOrder(
             Phake::verify($deferred)->reject('foo'),
@@ -113,5 +106,19 @@ abstract class AbstractAdapterTest extends \PHPUnit_Framework_TestCase
     protected function getMockDeferred()
     {
         return Phake::mock('React\Promise\Deferred');
+    }
+
+    /**
+     * Returns a mock deferred promise.
+     *
+     * @return \GuzzleHttp\Message\Response
+     */
+    protected function getMockResponse($statusCode, array $headers = [], $body = '')
+    {
+        $response = Phake::mock('GuzzleHttp\Message\Response');
+        Phake::when($response)->getStatusCode()->thenReturn($statusCode);
+        Phake::when($response)->getHeaders()->thenReturn($headers);
+        Phake::when($response)->getBody()->thenReturn($body);
+        return $response;
     }
 }

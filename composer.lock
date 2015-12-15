@@ -381,11 +381,6 @@
             ],
             "authors": [
                 {
-                    "name": "Takashi Nojima",
-                    "homepage": "http://php-tips.com",
-                    "role": "Developer"
-                },
-                {
                     "name": "Matt Sanford",
                     "email": "matt@mzsanford.com",
                     "homepage": "http://mzsanford.com"
@@ -399,6 +394,10 @@
                     "name": "Nick Pope",
                     "email": "git@nickpope.me.uk",
                     "homepage": "http://www.nickpope.me.uk"
+                },
+                {
+                    "name": "Takashi Nojima",
+                    "homepage": "http://php-tips.com"
                 }
             ],
             "description": "A library of PHP classes that provide auto-linking and extraction of usernames, lists, hashtags and URLs from tweets.",
