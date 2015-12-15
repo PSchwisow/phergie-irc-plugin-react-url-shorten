@@ -28,7 +28,7 @@ return [
         new \Phergie\Plugin\Dns\Plugin, // Handles DNS lookups for the HTTP plugin
         new \Phergie\Plugin\Http\Plugin, // Handles the HTTP requests for this plugin
         new \Phergie\Irc\Plugin\React\Url\Plugin([
-            'handler' => new \WyriHaximus\Phergie\Plugin\Url\DefaultUrlHandler('[%url-short%] %composed-title%')
+            'handler' => new \Phergie\Irc\Plugin\React\Url\DefaultUrlHandler('[%url-short%] %composed-title%')
         ]), // Emits url.shorten.* events
 
         // configuration
