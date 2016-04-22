@@ -89,6 +89,69 @@ class PluginTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests handleShortenEvent().
+     */
+    public function testHandleShortenEventDisableSkipHost()
+    {
+        $adapter = $this->getMockAdapter();
+        $deferred = $this->getMockDeferred();
+        Phake::when($adapter)->getApiUrl($this->isType('string'))->thenReturn('http://short.com/blah');
+        Phake::when($adapter)->getApiRequest('http://short.com/blah', $deferred)->thenReturn('foo');
+        $logger = $this->getMockLogger();
+        $emitter = $this->getMockEventEmitter();
+
+        $plugin = new Plugin(['service' => $adapter, 'minimumLength' => 20, 'disableDefaultSkipHosts' => true]);
+        $plugin->setLogger($logger);
+        $plugin->setEventEmitter($emitter);
+
+        $url = 'http://t.co/abcdefghijklmnop';
+        $plugin->handleShortenEvent($url, $deferred);
+
+        Phake::inOrder(
+            Phake::verify($logger)->debug($this->stringContains('Shortening url: ')),
+            Phake::verify($emitter)->emit('http.request', ['foo'])
+        );
+    }
+
+    /**
+     * Tests handleShortenEvent().
+     */
+    public function testHandleShortenEventOverrideSkipHost()
+    {
+        $adapter = $this->getMockAdapter();
+        $deferred1 = $this->getMockDeferred();
+        Phake::when($adapter)->getApiUrl($this->isType('string'))->thenReturn('http://short.com/blah');
+        Phake::when($adapter)->getApiRequest('http://short.com/blah', $deferred1)->thenReturn('foo');
+        $deferred2 = $this->getMockDeferred();
+        $logger = $this->getMockLogger();
+        $emitter = $this->getMockEventEmitter();
+
+        $plugin = new Plugin(
+            [
+                'service' => $adapter,
+                'minimumLength' => 20,
+                'disableDefaultSkipHosts' => true,
+                'skipHosts' => ['abc.com', 'xyz.net']
+            ]
+        );
+        $plugin->setLogger($logger);
+        $plugin->setEventEmitter($emitter);
+
+        $url1 = 'http://t.co/abcdefghijklmnop';
+        $plugin->handleShortenEvent($url1, $deferred1);
+
+        $url2 = 'http://abc.com/abcdefghijklmnop';
+        $plugin->handleShortenEvent($url2, $deferred2);
+
+        Phake::inOrder(
+            Phake::verify($logger)->debug($this->stringContains('Shortening url: ')),
+            Phake::verify($emitter)->emit('http.request', ['foo']),
+            Phake::verify($logger)->debug($this->stringContains('Skip shortening url (based on hostname): ')),
+            Phake::verify($deferred2)->resolve($url2)
+        );
+    }
+
+    /**
      * Tests that getSubscribedEvents() returns an array.
      */
     public function testGetSubscribedEvents()
