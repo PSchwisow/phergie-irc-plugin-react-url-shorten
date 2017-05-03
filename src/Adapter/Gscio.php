@@ -33,7 +33,7 @@ class Gscio extends AbstractAdapter
      */
     public function getApiUrl($url)
     {
-        return 'http://u.gsc.io/?rl=' . rawurlencode($url);
+        return 'https://u.gsc.io/?rl=' . rawurlencode($url);
     }
 
     /**
